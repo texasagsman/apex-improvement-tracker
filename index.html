@@ -589,15 +589,15 @@
   <div class="modal">
     <div class="modal-title">⚙ Connect Google Sheets</div>
     <div class="modal-desc">
-      Your data will be stored in a Google Sheet in your own Drive. You only need to do this once.<br><br>
-      <strong>Step-by-step setup:</strong>
+      Your data is stored in your own Google Sheet via Apps Script. You only need to do this once — paste your Web App URL below.<br><br>
+      <strong>Don't have a URL yet? Follow these steps:</strong>
     </div>
     <div class="steps">
-      <div class="step"><div class="step-num">1</div><div>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → Create a new project (name it anything).</div></div>
-      <div class="step"><div class="step-num">2</div><div>In the search bar type <strong>Google Sheets API</strong> → Click it → Click <strong>Enable</strong>.</div></div>
-      <div class="step"><div class="step-num">3</div><div>Go to <strong>APIs & Services → Credentials → Create Credentials → API Key</strong>. Copy the key.</div></div>
-      <div class="step"><div class="step-num">4</div><div>Go to <a href="https://sheets.google.com" target="_blank">sheets.google.com</a> → Create a blank sheet → Copy the long ID from the URL (between /d/ and /edit).</div></div>
-      <div class="step"><div class="step-num">5</div><div>Make the sheet <strong>publicly viewable</strong>: Share → Anyone with the link → Viewer. (The API key handles write access.)</div></div>
+      <div class="step"><div class="step-num">1</div><div>Go to <a href="https://sheets.google.com" target="_blank">sheets.google.com</a> and create a blank Google Sheet.</div></div>
+      <div class="step"><div class="step-num">2</div><div>Inside the Sheet, click <strong>Extensions → Apps Script</strong>.</div></div>
+      <div class="step"><div class="step-num">3</div><div>Delete any existing code, paste in the Apps Script code provided to you, and click <strong>Save</strong>.</div></div>
+      <div class="step"><div class="step-num">4</div><div>Click <strong>Deploy → New deployment</strong>. Set type to <strong>Web app</strong>, Execute as: <strong>Me</strong>, Who has access: <strong>Anyone</strong>. Click <strong>Deploy</strong> and authorize when prompted.</div></div>
+      <div class="step"><div class="step-num">5</div><div>Copy the <strong>Web App URL</strong> from the deployment screen and paste it below.</div></div>
     </div>
     <div class="field-group">
       <label class="field-label">Apps Script Web App URL</label>
