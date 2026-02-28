@@ -512,6 +512,75 @@
   .text-red { color: var(--red); }
   .mt-4 { margin-top: 16px; }
   .flex-end { display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* ── LEGEND IMAGES ─────────────────────────────────────── */
+  .legend-portrait {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    object-position: top center;
+    border: 2px solid var(--border2);
+    background: var(--panel);
+    flex-shrink: 0;
+  }
+  .legend-portrait.large {
+    width: 120px;
+    height: 120px;
+  }
+  .legend-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    opacity: 0.85;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+  }
+  .header-bangalore {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 110px;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0.12;
+    pointer-events: none;
+    filter: grayscale(1);
+  }
+  .squad-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .squad-card-info { flex: 1; }
+  .squad-card-name {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-style: italic;
+    line-height: 1;
+  }
+  .squad-card-role {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 3px;
+    margin-bottom: 6px;
+  }
+  .squad-card-note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
 </style>
 </head>
 <body>
@@ -553,12 +622,18 @@
 <!-- ── APP ───────────────────────────────────────────────────── -->
 <div class="app">
 
-  <div class="header">
+  <div class="header" style="position:relative;overflow:hidden;">
     <div class="header-left">
-      <div class="logo"><span>Apex</span> Tracker</div>
-      <div class="header-sub">Bangalore IGL &nbsp;·&nbsp; Diamond Ranked &nbsp;·&nbsp; 4-3 Linear</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Bangalore_Icon.svg" class="legend-icon" style="width:36px;height:36px;opacity:0.9;" alt="Bangalore">
+        <div>
+          <div class="logo"><span>Apex</span> Tracker</div>
+          <div class="header-sub">Bangalore IGL &nbsp;·&nbsp; Diamond Ranked &nbsp;·&nbsp; 4-3 Linear</div>
+        </div>
+      </div>
     </div>
     <button class="config-badge" id="configBtn" onclick="openSetup()">⚙ NOT CONNECTED</button>
+    <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Bangalore.jpg" class="header-bangalore" alt="">
   </div>
 
   <div class="tabs">
@@ -572,7 +647,10 @@
   <!-- ── LOG GAME ────────────────────────────────────────────── -->
   <div class="panel active" id="panel-log">
     <div class="card card-accent">
-      <div class="card-title">Log a Game</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Bangalore_Icon.svg" class="legend-icon" alt="Bangalore">
+        <div class="card-title" style="margin-bottom:0">Log a Game</div>
+      </div>
       <div class="form-grid three">
         <div class="field-group">
           <label class="field-label">Date</label>
@@ -640,6 +718,12 @@
 
   <!-- ── HISTORY ─────────────────────────────────────────────── -->
   <div class="panel" id="panel-history">
+    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+      <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Bangalore.jpg" class="legend-portrait" style="width:48px;height:48px;" alt="Bangalore">
+      <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Valkyrie.jpg" class="legend-portrait" style="width:48px;height:48px;" alt="Valkyrie">
+      <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Alter.jpg" class="legend-portrait" style="width:48px;height:48px;" alt="Alter">
+      <div style="font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-style:italic;margin-left:4px;">Session Stats</div>
+    </div>
     <div class="stats-row" id="statsRow">
       <div class="stat-pill"><div class="stat-val" id="statGames">—</div><div class="stat-lbl">Games</div></div>
       <div class="stat-pill"><div class="stat-val" id="statNetRP">—</div><div class="stat-lbl">Net RP</div></div>
@@ -713,6 +797,35 @@
 
   <!-- ── REFERENCE ───────────────────────────────────────────── -->
   <div class="panel" id="panel-ref">
+
+
+    <div class="ref-section">
+      <div class="ref-title">Your Squad</div>
+      <div class="squad-card">
+        <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Bangalore.jpg" class="legend-portrait" alt="Bangalore">
+        <div class="squad-card-info">
+          <div class="squad-card-name">Bangalore</div>
+          <div class="squad-card-role">You &nbsp;·&nbsp; IGL &nbsp;·&nbsp; Assault</div>
+          <div class="squad-card-note">Controller · 4-3 Linear · ~3,000 hrs · Diamond ranked. Strengths: macro, game sense, IGL comms. Focus: late game consistency, proactive smoke usage.</div>
+        </div>
+      </div>
+      <div class="squad-card" style="border-top-color:#4fc3f7">
+        <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Valkyrie.jpg" class="legend-portrait" alt="Valkyrie">
+        <div class="squad-card-info">
+          <div class="squad-card-name">Valkyrie</div>
+          <div class="squad-card-role">Fragger &nbsp;·&nbsp; Recon &nbsp;·&nbsp; Best Mechanics</div>
+          <div class="squad-card-note">Strong gunfight ability. Platinum-level macro. Tendency to play lone wolf. Channel aggression with pre-fight target calls — don't restrict, redirect.</div>
+        </div>
+      </div>
+      <div class="squad-card" style="border-top-color:var(--green)">
+        <img src="https://apexlegends.fandom.com/wiki/Special:FilePath/Alter.jpg" class="legend-portrait" alt="Alter">
+        <div class="squad-card-info">
+          <div class="squad-card-name">Alter</div>
+          <div class="squad-card-role">Support &nbsp;·&nbsp; Skirmisher &nbsp;·&nbsp; Diamond Macro</div>
+          <div class="squad-card-note">Diamond-level game sense and ring reads — your second IGL voice. Gold-level mechanics. Never put him in a raw duel. Use his macro awareness in late game.</div>
+        </div>
+      </div>
+    </div>
 
     <div class="ref-section">
       <div class="ref-title">Team Comp — Bangalore + Valkyrie + Alter</div>
