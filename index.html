@@ -35,7 +35,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-ui);
-    font-size: 16px;
+    font-size: clamp(14px, 1.1vw, 18px);
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -52,11 +52,11 @@
     z-index: 0;
   }
 
-  .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 16px 80px; }
+  .app { position: relative; z-index: 1; max-width: 1600px; width: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 48px) 80px; }
 
   /* ── HEADER ────────────────────────────────────────────── */
   .header {
-    padding: 28px 0 20px;
+    padding: clamp(20px, 2.5vw, 40px) 0 clamp(16px, 2vw, 28px);
     border-bottom: 2px solid var(--accent);
     margin-bottom: 24px;
     display: flex;
@@ -71,7 +71,7 @@
   .logo {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: clamp(26px, 6vw, 42px); font-style: italic;
+    font-size: clamp(26px, 3.5vw, 56px); font-style: italic;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     line-height: 1;
@@ -115,11 +115,11 @@
 
   .tab {
     font-family: var(--font-ui);
-    font-size: 13px;
+    font-size: clamp(11px, 1vw, 15px);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 10px 18px;
+    padding: clamp(8px, 1vw, 14px) clamp(14px, 1.6vw, 26px);
     color: var(--muted);
     border: none;
     background: none;
@@ -155,7 +155,7 @@
     background: var(--card);
     border: 1px solid var(--border2);
     border-top: 2px solid var(--accent);
-    max-width: 540px;
+    max-width: clamp(480px, 45vw, 680px);
     width: 100%;
     padding: 28px;
   }
@@ -224,8 +224,8 @@
     border: 1px solid var(--border2);
     color: var(--text);
     font-family: var(--font-mono);
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: clamp(12px, 1vw, 15px);
+    padding: clamp(7px, 0.8vw, 11px) clamp(10px, 1vw, 14px);
     border-radius: 2px;
     outline: none;
     transition: border-color 0.15s;
@@ -257,7 +257,7 @@
   /* ── SECTION HEADERS ───────────────────────────────────── */
   .section-header {
     font-family: var(--font-head);
-    font-size: 13px;
+    font-size: clamp(11px, 1vw, 15px);
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -279,8 +279,8 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-top: 3px solid var(--border2);
-    padding: 20px;
-    margin-bottom: 16px;
+    padding: clamp(16px, 2vw, 28px);
+    margin-bottom: clamp(12px, 1.2vw, 20px);
   }
   .card-accent { border-top-color: var(--accent); }
   .card-red { border-top-color: var(--accent2); }
@@ -288,21 +288,25 @@
 
   .card-title {
     font-family: var(--font-head);
-    font-size: 16px;
+    font-size: clamp(14px, 1.3vw, 20px);
     font-weight: 900;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #ffffff;
-    margin-bottom: 14px;
+    margin-bottom: clamp(10px, 1vw, 16px);
     font-style: italic;
   }
 
   /* ── FORM GRID ─────────────────────────────────────────── */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 1.2vw, 18px); }
   .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
   .form-grid.full { grid-template-columns: 1fr; }
   @media (max-width: 600px) {
     .form-grid, .form-grid.three { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 1400px) {
+    .form-grid { gap: 20px; }
+    .form-grid.three { gap: 20px; }
   }
 
   .field-group textarea { min-height: 72px; resize: vertical; font-family: var(--font-ui); font-size: 14px; }
@@ -310,21 +314,21 @@
   /* ── STAT PILLS ────────────────────────────────────────── */
   .stats-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: clamp(6px, 0.8vw, 12px);
+    margin-bottom: clamp(16px, 1.6vw, 24px);
     flex-wrap: wrap;
   }
   .stat-pill {
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 10px 16px;
+    padding: clamp(8px, 1vw, 16px) clamp(12px, 1.4vw, 22px);
     flex: 1;
     min-width: 80px;
     text-align: center;
   }
   .stat-val {
     font-family: var(--font-head);
-    font-size: 22px;
+    font-size: clamp(20px, 2.2vw, 36px);
     font-weight: 900;
     color: #ffffff;
     line-height: 1;
@@ -343,7 +347,7 @@
     background: var(--panel);
     border: 1px solid var(--border);
     border-left: 3px solid var(--border2);
-    padding: 14px 16px;
+    padding: clamp(12px, 1.2vw, 20px) clamp(14px, 1.4vw, 22px);
     margin-bottom: 8px;
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -390,7 +394,7 @@
   /* ── RP CHART ──────────────────────────────────────────── */
   .chart-container {
     position: relative;
-    height: 220px;
+    height: clamp(180px, 20vw, 360px);
     margin-bottom: 8px;
   }
   canvas { width: 100% !important; }
@@ -439,7 +443,7 @@
     margin-bottom: 10px;
   }
   .ref-item {
-    font-size: 13px;
+    font-size: clamp(12px, 1vw, 15px);
     color: var(--text);
     padding: 5px 0 5px 14px;
     border-left: 2px solid var(--border2);
@@ -450,9 +454,9 @@
     background: rgba(218,41,42,0.05);
     border: 1px solid rgba(218,41,42,0.2);
     border-left: 4px solid var(--accent);
-    padding: 10px 14px;
+    padding: clamp(8px, 1vw, 14px) clamp(12px, 1.2vw, 18px);
     margin: 10px 0;
-    font-size: 13px;
+    font-size: clamp(12px, 1vw, 15px);
     line-height: 1.6;
     color: var(--text);
   }
@@ -515,8 +519,8 @@
 
   /* ── LEGEND IMAGES ─────────────────────────────────────── */
   .legend-portrait {
-    width: 64px;
-    height: 64px;
+    width: clamp(52px, 5vw, 80px);
+    height: clamp(52px, 5vw, 80px);
     object-fit: cover;
     object-position: top center;
     border: 2px solid var(--border2);
@@ -524,8 +528,8 @@
     flex-shrink: 0;
   }
   .legend-portrait.large {
-    width: 120px;
-    height: 120px;
+    width: clamp(90px, 9vw, 140px);
+    height: clamp(90px, 9vw, 140px);
   }
   .legend-icon {
     width: 28px;
@@ -538,7 +542,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    height: 110px;
+    height: clamp(90px, 10vw, 160px);
     object-fit: cover;
     object-position: top center;
     opacity: 0.12;
@@ -558,7 +562,7 @@
   .squad-card-info { flex: 1; }
   .squad-card-name {
     font-family: var(--font-head);
-    font-size: 16px;
+    font-size: clamp(14px, 1.4vw, 22px);
     font-weight: 900;
     letter-spacing: 0.1em;
     text-transform: uppercase;
