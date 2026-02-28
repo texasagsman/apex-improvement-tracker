@@ -35,7 +35,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-ui);
-    font-size: clamp(14px, 1.1vw, 18px);
+    font-size: clamp(15px, 1.3vw, 20px);
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -52,17 +52,25 @@
     z-index: 0;
   }
 
-  .app { position: relative; z-index: 1; max-width: 1600px; width: 100%; margin: 0 auto; padding: 0 clamp(16px, 3vw, 48px) 80px; }
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 4vw, 80px) 60px;
+    min-height: 100vh;
+  }
 
   /* ── HEADER ────────────────────────────────────────────── */
   .header {
     padding: clamp(20px, 2.5vw, 40px) 0 clamp(16px, 2vw, 28px);
     border-bottom: 2px solid var(--accent);
-    margin-bottom: 24px;
+    margin-bottom: clamp(16px, 2vw, 32px);
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 16px;
+    gap: clamp(12px, 1.5vw, 24px);
     flex-wrap: wrap;
   }
 
@@ -80,7 +88,7 @@
 
   .header-sub {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: clamp(10px, 0.9vw, 14px);
     color: var(--accent);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -106,8 +114,8 @@
   .tabs {
     display: flex;
     gap: 2px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border);
+    margin-bottom: clamp(16px, 2vw, 32px);
+    border-bottom: 2px solid var(--border);
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -135,6 +143,46 @@
   /* ── PANELS ────────────────────────────────────────────── */
   .panel { display: none; animation: fadeIn 0.2s ease; }
   .panel.active { display: block; }
+
+  /* ── TWO COLUMN LAYOUT ON WIDE SCREENS ─────────────────── */
+  @media (min-width: 1100px) {
+    #panel-log .card { max-width: 100%; }
+    #panel-log { display: none; }
+    #panel-log.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 32px);
+      align-items: start;
+    }
+    #panel-history { display: none; }
+    #panel-history.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 32px);
+      align-items: start;
+    }
+    #panel-rp { display: none; }
+    #panel-rp.active {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: clamp(16px, 2vw, 32px);
+      align-items: start;
+    }
+    #panel-weekly { display: none; }
+    #panel-weekly.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 32px);
+      align-items: start;
+    }
+    #panel-ref { display: none; }
+    #panel-ref.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 32px);
+      align-items: start;
+    }
+  }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -234,11 +282,11 @@
 
   .btn {
     font-family: var(--font-ui);
-    font-size: 13px;
+    font-size: clamp(12px, 1vw, 15px);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 10px 20px;
+    padding: clamp(9px, 0.9vw, 14px) clamp(16px, 1.6vw, 28px);
     border: none;
     cursor: pointer;
     border-radius: 2px;
@@ -279,8 +327,8 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-top: 3px solid var(--border2);
-    padding: clamp(16px, 2vw, 28px);
-    margin-bottom: clamp(12px, 1.2vw, 20px);
+    padding: clamp(20px, 2.5vw, 40px);
+    margin-bottom: clamp(14px, 1.5vw, 24px);
   }
   .card-accent { border-top-color: var(--accent); }
   .card-red { border-top-color: var(--accent2); }
@@ -309,7 +357,7 @@
     .form-grid.three { gap: 20px; }
   }
 
-  .field-group textarea { min-height: 72px; resize: vertical; font-family: var(--font-ui); font-size: 14px; }
+  .field-group textarea { min-height: clamp(64px, 6vw, 100px); resize: vertical; font-family: var(--font-ui); font-size: clamp(13px, 1.1vw, 16px); }
 
   /* ── STAT PILLS ────────────────────────────────────────── */
   .stats-row {
@@ -334,7 +382,7 @@
     line-height: 1;
   }
   .stat-lbl {
-    font-size: 10px;
+    font-size: clamp(10px, 0.8vw, 13px);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -362,7 +410,7 @@
 
   .log-placement {
     font-family: var(--font-head);
-    font-size: 20px;
+    font-size: clamp(18px, 2vw, 32px);
     font-weight: 900;
     color: #ffffff;
     line-height: 1;
@@ -371,12 +419,12 @@
   }
   .log-placement.top3 { color: var(--green); }
 
-  .log-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .log-notes { font-size: 13px; color: var(--text); margin-top: 4px; line-height: 1.4; }
+  .log-meta { font-size: clamp(11px, 0.9vw, 14px); color: var(--muted); margin-top: 2px; }
+  .log-notes { font-size: clamp(12px, 1vw, 15px); color: var(--text); margin-top: 4px; line-height: 1.4; }
 
   .log-rp {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: clamp(12px, 1.1vw, 17px);
     font-weight: 700;
     text-align: right;
   }
@@ -403,8 +451,8 @@
   .week-card {
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 16px;
-    margin-bottom: 10px;
+    padding: clamp(14px, 1.6vw, 24px);
+    margin-bottom: clamp(8px, 1vw, 14px);
   }
   .week-header {
     display: flex;
