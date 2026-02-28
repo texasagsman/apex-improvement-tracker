@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Tracker — Bangalore IGL</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ── CONFIG NOTICE ─────────────────────────────────────── */
+  :root {
+    --bg:        #080909;
+    --panel:     #0e0f0f;
+    --card:      #131414;
+    --border:    #1f2020;
+    --border2:   #2a2c2c;
+    --accent:    #DA292A;
+    --accent-bright: #ff3333;
+    --accent2:   #ff4655;
+    --accent3:   #c8c8c8;
+    --text:      #d8d8d8;
+    --muted:     #5a5c5c;
+    --muted2:    #333535;
+    --green:     #4caf82;
+    --red:       #DA292A;
+    --font-head: 'Barlow Condensed', sans-serif;
+    --font-ui:   'Barlow', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND TEXTURE ────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,10,10,0.35) 39px, rgba(30,10,10,0.35) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,10,10,0.15) 39px, rgba(30,10,10,0.15) 40px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 16px 80px; }
+
+  /* ── HEADER ────────────────────────────────────────────── */
+  .header {
+    padding: 28px 0 20px;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {}
+
+  .logo {
+    font-family: var(--font-head);
+    font-weight: 900;
+    font-size: clamp(26px, 6vw, 42px); font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .logo span { color: var(--accent); }
+
+  .header-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    opacity: 0.8;
+  }
+
+  .config-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .config-badge:hover { background: rgba(255,70,85,0.1); }
+  .config-badge.connected { border-color: var(--green); color: var(--green); }
+
+  /* ── TABS ──────────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    color: var(--muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); letter-spacing: 0.12em; }
+
+  /* ── PANELS ────────────────────────────────────────────── */
+  .panel { display: none; animation: fadeIn 0.2s ease; }
+  .panel.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── SETUP MODAL ───────────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,11,15,0.92);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-top: 2px solid var(--accent);
+    max-width: 540px;
+    width: 100%;
+    padding: 28px;
+  }
+
+  .modal-title {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-style: italic;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    margin-bottom: 8px;
+  }
+
+  .modal-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .modal-desc a { color: var(--accent3); text-decoration: none; }
+  .modal-desc a:hover { text-decoration: underline; }
+
+  .steps { margin-bottom: 20px; }
+  .step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent);
+    color: var(--bg);
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+
+  .field-group { margin-bottom: 14px; }
+  .field-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+
+  .btn {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover { background: #f5c85c; }
+  .btn-secondary { background: var(--border2); color: var(--text); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--accent2); color: white; }
+  .btn-danger:hover { background: #ff6070; }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ── SECTION HEADERS ───────────────────────────────────── */
+  .section-header {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CARDS ─────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--border2);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-accent { border-top-color: var(--accent); }
+  .card-red { border-top-color: var(--accent2); }
+  .card-blue { border-top-color: var(--accent3); }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  /* ── FORM GRID ─────────────────────────────────────────── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-grid.full { grid-template-columns: 1fr; }
+  @media (max-width: 600px) {
+    .form-grid, .form-grid.three { grid-template-columns: 1fr; }
+  }
+
+  .field-group textarea { min-height: 72px; resize: vertical; font-family: var(--font-ui); font-size: 14px; }
+
+  /* ── STAT PILLS ────────────────────────────────────────── */
+  .stats-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── GAME LOG LIST ─────────────────────────────────────── */
+  .log-entry {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border2);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: start;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .log-entry:hover { border-left-color: var(--accent); }
+  .log-entry.win { border-left-color: var(--accent); }
+  .log-entry.loss { border-left-color: var(--accent2); }
+
+  .log-placement {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    min-width: 36px;
+    text-align: center;
+  }
+  .log-placement.top3 { color: var(--green); }
+
+  .log-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .log-notes { font-size: 13px; color: var(--text); margin-top: 4px; line-height: 1.4; }
+
+  .log-rp {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: right;
+  }
+  .log-rp.pos { color: var(--green); }
+  .log-rp.neg { color: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .empty-state .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+
+  /* ── RP CHART ──────────────────────────────────────────── */
+  .chart-container {
+    position: relative;
+    height: 220px;
+    margin-bottom: 8px;
+  }
+  canvas { width: 100% !important; }
+
+  /* ── WEEKLY REVIEW ─────────────────────────────────────── */
+  .week-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .week-title {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-style: italic;
+  }
+  .week-body { display: none; }
+  .week-body.open { display: block; }
+  .week-chevron { color: var(--muted); transition: transform 0.2s; }
+  .week-chevron.open { transform: rotate(180deg); }
+
+  /* ── REFERENCE ─────────────────────────────────────────── */
+  .ref-section { margin-bottom: 20px; }
+  .ref-title {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-style: italic;
+    padding: 8px 12px;
+    border-left: 4px solid var(--accent);
+    background: rgba(218,41,42,0.08);
+    margin-bottom: 10px;
+  }
+  .ref-item {
+    font-size: 13px;
+    color: var(--text);
+    padding: 5px 0 5px 14px;
+    border-left: 2px solid var(--border2);
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+  .callout-box {
+    background: rgba(218,41,42,0.05);
+    border: 1px solid rgba(218,41,42,0.2);
+    border-left: 4px solid var(--accent);
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .callout-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* ── LOADING / TOAST ───────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--accent);
+    padding: 10px 20px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    z-index: 200;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { border-left-color: var(--accent2); }
+  .toast.success { border-left-color: var(--green); }
+
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── DETAIL MODAL ──────────────────────────────────────── */
+  .detail-field { margin-bottom: 12px; }
+  .detail-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .detail-val { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+  /* ── MISC ──────────────────────────────────────────────── */
+  select option { background: var(--card); }
+  .text-accent { color: var(--accent); }
+  .text-muted { color: var(--muted); }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .mt-4 { margin-top: 16px; }
+  .flex-end { display: flex; justify-content: flex-end; gap: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ── SETUP MODAL ───────────────────────────────────────────── -->
+<div class="modal-overlay" id="setupModal">
+  <div class="modal">
+    <div class="modal-title">⚙ Connect Google Sheets</div>
+    <div class="modal-desc">
+      Your data will be stored in a Google Sheet in your own Drive. You only need to do this once.<br><br>
+      <strong>Step-by-step setup:</strong>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → Create a new project (name it anything).</div></div>
+      <div class="step"><div class="step-num">2</div><div>In the search bar type <strong>Google Sheets API</strong> → Click it → Click <strong>Enable</strong>.</div></div>
+      <div class="step"><div class="step-num">3</div><div>Go to <strong>APIs & Services → Credentials → Create Credentials → API Key</strong>. Copy the key.</div></div>
+      <div class="step"><div class="step-num">4</div><div>Go to <a href="https://sheets.google.com" target="_blank">sheets.google.com</a> → Create a blank sheet → Copy the long ID from the URL (between /d/ and /edit).</div></div>
+      <div class="step"><div class="step-num">5</div><div>Make the sheet <strong>publicly viewable</strong>: Share → Anyone with the link → Viewer. (The API key handles write access.)</div></div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Apps Script Web App URL</label>
+      <input type="text" id="cfgScriptUrl" placeholder="https://script.google.com/macros/s/...">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeSetup()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveConfig()">Save & Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DETAIL MODAL ──────────────────────────────────────────── -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" id="detailContent"></div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── APP ───────────────────────────────────────────────────── -->
+<div class="app">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo"><span>Apex</span> Tracker</div>
+      <div class="header-sub">Bangalore IGL &nbsp;·&nbsp; Diamond Ranked &nbsp;·&nbsp; 4-3 Linear</div>
+    </div>
+    <button class="config-badge" id="configBtn" onclick="openSetup()">⚙ NOT CONNECTED</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('log')">Log Game</button>
+    <button class="tab" onclick="switchTab('history')">Game History</button>
+    <button class="tab" onclick="switchTab('rp')">RP Tracker</button>
+    <button class="tab" onclick="switchTab('weekly')">Weekly Review</button>
+    <button class="tab" onclick="switchTab('ref')">Reference</button>
+  </div>
+
+  <!-- ── LOG GAME ────────────────────────────────────────────── -->
+  <div class="panel active" id="panel-log">
+    <div class="card card-accent">
+      <div class="card-title">Log a Game</div>
+      <div class="form-grid three">
+        <div class="field-group">
+          <label class="field-label">Date</label>
+          <input type="text" id="logDate" placeholder="e.g. Feb 28">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Mode</label>
+          <select id="logMode">
+            <option value="Ranked">Ranked</option>
+            <option value="Solo Queue">Solo Queue</option>
+            <option value="With Friends">With Friends</option>
+            <option value="Mixtape">Mixtape</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Squad</label>
+          <select id="logSquad">
+            <option value="Solo Queue">Solo Queue</option>
+            <option value="Full Squad">Full Squad (IRL friends)</option>
+            <option value="Duo">Duo</option>
+            <option value="Randoms">Randoms</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid three">
+        <div class="field-group">
+          <label class="field-label">Placement</label>
+          <input type="number" id="logPlacement" placeholder="e.g. 3" min="1" max="20">
+        </div>
+        <div class="field-group">
+          <label class="field-label">RP +/-</label>
+          <input type="number" id="logRP" placeholder="e.g. +180 or -48">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Kills / Assists</label>
+          <input type="text" id="logKD" placeholder="e.g. 4K / 2A">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label">✓ What went right</label>
+          <textarea id="logRight" placeholder="One sentence."></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">✗ What went wrong</label>
+          <textarea id="logWrong" placeholder="One sentence."></textarea>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label">→ Would do differently</label>
+          <textarea id="logDiff" placeholder="One sentence." style="min-height:52px"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">★ Notable moment (optional)</label>
+          <textarea id="logNote" placeholder="Flag for VOD review." style="min-height:52px"></textarea>
+        </div>
+      </div>
+      <div class="flex-end mt-4">
+        <button class="btn btn-secondary btn-sm" onclick="clearForm()">Clear</button>
+        <button class="btn btn-primary" onclick="saveGame()">Save Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HISTORY ─────────────────────────────────────────────── -->
+  <div class="panel" id="panel-history">
+    <div class="stats-row" id="statsRow">
+      <div class="stat-pill"><div class="stat-val" id="statGames">—</div><div class="stat-lbl">Games</div></div>
+      <div class="stat-pill"><div class="stat-val" id="statNetRP">—</div><div class="stat-lbl">Net RP</div></div>
+      <div class="stat-pill"><div class="stat-val" id="statAvgPlacement">—</div><div class="stat-lbl">Avg Place</div></div>
+      <div class="stat-pill"><div class="stat-val" id="statTop5">—</div><div class="stat-lbl">Top 5 %</div></div>
+    </div>
+    <div id="historyList"><div class="empty-state"><div class="empty-icon">📋</div>No games logged yet.</div></div>
+  </div>
+
+  <!-- ── RP TRACKER ──────────────────────────────────────────── -->
+  <div class="panel" id="panel-rp">
+    <div class="card card-accent">
+      <div class="card-title">RP Progression</div>
+      <div class="chart-container">
+        <canvas id="rpChart"></canvas>
+      </div>
+      <div id="rpEmpty" class="empty-state" style="display:none"><div class="empty-icon">📈</div>Log games to see your RP chart.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Weekly RP Summary</div>
+      <div id="weeklyRPTable"><div class="empty-state" style="padding:20px">No data yet.</div></div>
+    </div>
+  </div>
+
+  <!-- ── WEEKLY REVIEW ───────────────────────────────────────── -->
+  <div class="panel" id="panel-weekly">
+    <div class="card card-accent" style="margin-bottom:20px">
+      <div class="card-title">New Weekly Review</div>
+      <div class="form-grid three">
+        <div class="field-group">
+          <label class="field-label">Week / Dates</label>
+          <input type="text" id="wrWeek" placeholder="e.g. Feb 24–28">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Starting RP</label>
+          <input type="number" id="wrStartRP" placeholder="e.g. 8200">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Ending RP</label>
+          <input type="number" id="wrEndRP" placeholder="e.g. 8750">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label">Recurring pattern in mistakes</label>
+          <textarea id="wrPattern" placeholder="What mistake kept showing up?"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Focus point for next week</label>
+          <textarea id="wrFocus" placeholder="E.g. 'Don't commit without a clear exit.'"></textarea>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label">Biggest improvement this week</label>
+          <textarea id="wrImprove" placeholder="What actually got better?" style="min-height:52px"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Adjust the plan?</label>
+          <textarea id="wrAdjust" placeholder="Legend swap, new drill, habit to drop." style="min-height:52px"></textarea>
+        </div>
+      </div>
+      <div class="flex-end mt-4">
+        <button class="btn btn-primary" onclick="saveWeekly()">Save Review</button>
+      </div>
+    </div>
+
+    <div class="section-header">Past Reviews</div>
+    <div id="weeklyList"><div class="empty-state"><div class="empty-icon">📝</div>No weekly reviews yet.</div></div>
+  </div>
+
+  <!-- ── REFERENCE ───────────────────────────────────────────── -->
+  <div class="panel" id="panel-ref">
+
+    <div class="ref-section">
+      <div class="ref-title">Team Comp — Bangalore + Valkyrie + Alter</div>
+      <div class="callout-box"><div class="callout-label">Identity</div>Map control through superior repositioning. Fight on your terms, exit situations that aren't favorable. Valkyrie's ult is the engine. Bangalore's smoke controls tempo. Alter creates angles and extraction paths.</div>
+      <div class="callout-box"><div class="callout-label">Push Combo — "Smoke push, go"</div>Bangalore smokes the approach. Alter places Void Passage for secondary entry. Valkyrie pushes from above or through. Two-angle pressure that's very hard to hold at diamond.</div>
+      <div class="callout-box"><div class="callout-label">Reset Combo — "Smoking out"</div>Smoke goes on exit path, not your position. Everyone stops fighting and moves. Alter covers retreat with portal. Three layers of escape.</div>
+      <div class="callout-box"><div class="callout-label">Late Game</div>Identify final ring position before ring 3 closes. Valk ult to secure it early. Check in with Alter on ring reads — his macro awareness is an asset.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Solo Queue — Questions Every Game</div>
+      <div class="ref-item"><strong>Pre-drop:</strong> Where did the hot drop go? Is my landing ring-viable if I take an immediate fight?</div>
+      <div class="ref-item"><strong>Mid game:</strong> Am I ahead of the ring? Is this fight worth taking? (Resource advantage + position advantage + exit = 2 of 3 minimum)</div>
+      <div class="ref-item"><strong>In the fight:</strong> Am I using cover as a transition tool? Where's the third party coming from? (Budget 30-45 sec)</div>
+      <div class="ref-item"><strong>Final 3 rings:</strong> Where do I want to be — can I get there now? Am I playing for placement or kills?</div>
+      <div class="callout-box"><div class="callout-label">60-Second Rule</div>Before every requeue: Why did I die? Did I take a bad fight? Did I know where the ring was going before I had to move?</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Bangalore Ability Mastery</div>
+      <div class="ref-item"><strong>Smoke — Before fight:</strong> Smoke your approach angle, not yourself. Throw 2 seconds early.</div>
+      <div class="ref-item"><strong>Smoke — Mid fight:</strong> Smoke between you and the enemy to force their reposition.</div>
+      <div class="ref-item"><strong>Smoke — Disengaging:</strong> Smoke your exit path, not your current position.</div>
+      <div class="ref-item"><strong>Double Time:</strong> When it activates — commit to the push. Close range on 4-3 linear is your strongest moment.</div>
+      <div class="ref-item"><strong>Airstrike:</strong> Throw where enemies are going, not where they are. Chokepoints, doorways, retreat paths. Zone denial first.</div>
+      <div class="callout-box"><div class="callout-label">Pre-Fight Habit</div>Before every push: Which angle am I smoking? When does the second smoke go? What is the airstrike being saved for?</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Friend Session Principles</div>
+      <div class="ref-item"><strong>Fragger (Valkyrie):</strong> Assign a target before every engagement. Move the team around his push assumption. Cover with smoke — make him a hero.</div>
+      <div class="ref-item"><strong>Support (Alter):</strong> Check in on ring reads before late game. Never put him in a raw duel. Pre-placed portals, not reactive ones.</div>
+      <div class="ref-item"><strong>Comms:</strong> Short, positive, forward-looking. One observation between games max. Hype up wins loudly.</div>
+      <div class="callout-box"><div class="callout-label">Post-Game Debrief (3 min)</div>Where did we commit together? Where did we fragment? Did we use the Valk ult at the right time?</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Priority Improvement Areas</div>
+      <div class="ref-item"><strong>#1 — Late game consistency:</strong> Identify final ring position before ring 3 closes — every game.</div>
+      <div class="ref-item"><strong>#2 — Smoke usage:</strong> Proactive not reactive. 2 seconds early, between enemy and you.</div>
+      <div class="ref-item"><strong>#3 — Fight selection:</strong> Two-of-three check before every commitment.</div>
+      <div class="ref-item"><strong>#4 — Squad fragmentation:</strong> Drill push and reset combos until automatic.</div>
+      <div class="ref-item"><strong>#5 — Loadout flexibility:</strong> Adjust weapon range profile based on expected fight type.</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+let CFG = { scriptUrl: '' };
+let rpChartInstance = null;
+
+function loadConfig() {
+  const saved = localStorage.getItem('apexTrackerConfigV2');
+  if (saved) {
+    CFG = JSON.parse(saved);
+    updateConfigBadge();
+  } else {
+    setTimeout(() => openSetup(), 600);
+  }
+}
+
+function saveConfig() {
+  const url = document.getElementById('cfgScriptUrl').value.trim();
+  if (!url || !url.startsWith('https://script.google.com')) {
+    toast('Please paste a valid Apps Script URL.', 'error');
+    return;
+  }
+  CFG = { scriptUrl: url };
+  localStorage.setItem('apexTrackerConfigV2', JSON.stringify(CFG));
+  closeSetup();
+  updateConfigBadge();
+  loadAll().then(() => toast('Connected!', 'success'));
+}
+
+function updateConfigBadge() {
+  const btn = document.getElementById('configBtn');
+  if (CFG.scriptUrl) {
+    btn.textContent = '⚙ CONNECTED';
+    btn.classList.add('connected');
+  } else {
+    btn.textContent = '⚙ NOT CONNECTED';
+    btn.classList.remove('connected');
+  }
+}
+
+function openSetup() {
+  document.getElementById('cfgScriptUrl').value = CFG.scriptUrl || '';
+  document.getElementById('setupModal').classList.add('open');
+}
+function closeSetup() { document.getElementById('setupModal').classList.remove('open'); }
+
+// ── APPS SCRIPT API ──────────────────────────────────────────────────────────
+async function scriptGet(sheet) {
+  const url = `${CFG.scriptUrl}?sheet=${encodeURIComponent(sheet)}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Fetch failed: ${r.status}`);
+  const d = await r.json();
+  return d.rows || [];
+}
+
+async function scriptPost(sheet, headers, row) {
+  const r = await fetch(CFG.scriptUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ sheet, headers, action: 'append', row })
+  });
+  if (!r.ok) throw new Error(`Post failed: ${r.status}`);
+  const d = await r.json();
+  if (!d.success) throw new Error(d.error || 'Unknown error');
+  return d;
+}
+
+// ── GAME LOG ─────────────────────────────────────────────────────────────────
+function clearForm() {
+  ['logDate','logPlacement','logRP','logKD','logRight','logWrong','logDiff','logNote'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('logMode').value = 'Ranked';
+  document.getElementById('logSquad').value = 'Solo Queue';
+  const today = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  document.getElementById('logDate').value = today;
+}
+
+async function saveGame() {
+  if (!CFG.scriptUrl) { openSetup(); return; }
+  const row = [
+    document.getElementById('logDate').value || new Date().toLocaleDateString(),
+    document.getElementById('logMode').value,
+    document.getElementById('logSquad').value,
+    document.getElementById('logPlacement').value,
+    document.getElementById('logRP').value,
+    document.getElementById('logKD').value,
+    document.getElementById('logRight').value,
+    document.getElementById('logWrong').value,
+    document.getElementById('logDiff').value,
+    document.getElementById('logNote').value,
+  ];
+  if (!row[3]) { toast('Placement is required.', 'error'); return; }
+  try {
+    toast('<span class="spinner"></span>Saving…');
+    await scriptPost('Games',
+      ['Date','Mode','Squad','Placement','RP','Kills','Went Right','Went Wrong','Do Differently','Notable'],
+      row
+    );
+    clearForm();
+    await loadAll();
+    toast('Game saved!', 'success');
+    switchTab('history');
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────────────
+let gamesCache = [];
+
+async function loadGames() {
+  if (!CFG.scriptUrl) return;
+  try {
+    const rows = await scriptGet('Games');
+    gamesCache = rows.filter(r => r[3]);
+    renderHistory();
+    renderStats();
+    renderRPChart();
+    renderWeeklyRPTable();
+  } catch(e) { console.warn('loadGames:', e.message); }
+}
+
+function renderStats() {
+  const games = gamesCache;
+  document.getElementById('statGames').textContent = games.length || '—';
+  if (!games.length) return;
+  const netRP = games.reduce((s, r) => s + (parseInt(r[4]) || 0), 0);
+  document.getElementById('statNetRP').textContent = (netRP >= 0 ? '+' : '') + netRP;
+  document.getElementById('statNetRP').className = 'stat-val ' + (netRP >= 0 ? 'text-green' : 'text-red');
+  const avgPlace = (games.reduce((s,r) => s + (parseInt(r[3])||20), 0) / games.length).toFixed(1);
+  document.getElementById('statAvgPlacement').textContent = avgPlace;
+  const top5 = games.filter(r => parseInt(r[3]) <= 5).length;
+  document.getElementById('statTop5').textContent = Math.round(top5/games.length*100) + '%';
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if (!gamesCache.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>No games logged yet.</div>';
+    return;
+  }
+  const sorted = [...gamesCache].reverse();
+  el.innerHTML = sorted.map((r, i) => {
+    const place = parseInt(r[3]) || 20;
+    const rp = parseInt(r[4]) || 0;
+    const placeClass = place <= 3 ? 'top3' : '';
+    const rpClass = rp >= 0 ? 'pos' : 'neg';
+    const entryClass = place === 1 ? 'win' : (rp < 0 ? 'loss' : '');
+    const idx = gamesCache.length - 1 - i;
+    return `<div class="log-entry ${entryClass}" onclick="showDetail(${idx})">
+      <div>
+        <div class="log-placement ${placeClass}">#${place}</div>
+        <div class="log-meta">${r[0] || ''} · ${r[1] || ''}</div>
+      </div>
+      <div>
+        <div class="log-meta">${r[2] || ''} · ${r[5] || ''}</div>
+        ${r[6] ? `<div class="log-notes"><span style="color:var(--green)">✓</span> ${r[6]}</div>` : ''}
+        ${r[7] ? `<div class="log-notes"><span style="color:var(--red)">✗</span> ${r[7]}</div>` : ''}
+      </div>
+      <div class="log-rp ${rpClass}">${rp >= 0 ? '+' : ''}${rp || '—'}</div>
+    </div>`;
+  }).join('');
+}
+
+function showDetail(idx) {
+  const r = gamesCache[idx];
+  if (!r) return;
+  const rp = parseInt(r[4]) || 0;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="modal-title">#${r[3]} Place — ${r[0] || 'Unknown date'}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div class="detail-field"><div class="detail-label">Mode</div><div class="detail-val">${r[1]||'—'}</div></div>
+      <div class="detail-field"><div class="detail-label">Squad</div><div class="detail-val">${r[2]||'—'}</div></div>
+      <div class="detail-field"><div class="detail-label">RP</div><div class="detail-val" style="color:${rp>=0?'var(--green)':'var(--red)'}">${rp>=0?'+':''}${rp}</div></div>
+      <div class="detail-field"><div class="detail-label">Kills/Assists</div><div class="detail-val">${r[5]||'—'}</div></div>
+    </div>
+    ${r[6]?`<div class="detail-field"><div class="detail-label">✓ What went right</div><div class="detail-val">${r[6]}</div></div>`:''}
+    ${r[7]?`<div class="detail-field"><div class="detail-label">✗ What went wrong</div><div class="detail-val">${r[7]}</div></div>`:''}
+    ${r[8]?`<div class="detail-field"><div class="detail-label">→ Do differently</div><div class="detail-val">${r[8]}</div></div>`:''}
+    ${r[9]?`<div class="detail-field"><div class="detail-label">★ Notable</div><div class="detail-val">${r[9]}</div></div>`:''}
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="document.getElementById('detailModal').classList.remove('open')">Close</button></div>
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+// ── RP CHART ─────────────────────────────────────────────────────────────────
+function renderRPChart() {
+  const games = gamesCache;
+  const canvas = document.getElementById('rpChart');
+  const emptyEl = document.getElementById('rpEmpty');
+  if (!games.length) {
+    canvas.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  canvas.style.display = 'block';
+  emptyEl.style.display = 'none';
+  let cum = 0;
+  const labels = [];
+  const data = [];
+  games.forEach((r, i) => {
+    cum += (parseInt(r[4]) || 0);
+    labels.push(`G${i+1}`);
+    data.push(cum);
+  });
+  if (rpChartInstance) rpChartInstance.destroy();
+  rpChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: '#DA292A',
+        backgroundColor: 'rgba(218,41,42,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: '#DA292A',
+        pointRadius: data.length > 30 ? 0 : 3,
+        tension: 0.3,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        backgroundColor: '#131414',
+        borderColor: '#2a2c2c',
+        borderWidth: 1,
+        titleColor: '#DA292A',
+        bodyColor: '#d8d8d8',
+        callbacks: { label: ctx => `Net RP: ${ctx.raw >= 0 ? '+' : ''}${ctx.raw}` }
+      }},
+      scales: {
+        x: { ticks: { color: '#5a5c5c', font: { size: 10 } }, grid: { color: '#1f2020' } },
+        y: { ticks: { color: '#5a5c5c', font: { size: 10 } }, grid: { color: '#1f2020' } }
+      }
+    }
+  });
+}
+
+function renderWeeklyRPTable() {
+  const el = document.getElementById('weeklyRPTable');
+  if (!gamesCache.length) { el.innerHTML = '<div class="empty-state" style="padding:20px">No data yet.</div>'; return; }
+  const weeks = {};
+  gamesCache.forEach(r => {
+    const d = r[0] || 'Unknown';
+    const key = d.length > 5 ? d.substring(0, d.lastIndexOf(' ') > 0 ? d.lastIndexOf(' ') : 6) : d;
+    if (!weeks[key]) weeks[key] = [];
+    weeks[key].push(parseInt(r[4]) || 0);
+  });
+  const rows = Object.entries(weeks).map(([k, rps]) => {
+    const net = rps.reduce((a,b) => a+b, 0);
+    return `<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px">
+      <span style="color:var(--muted);font-family:var(--font-mono)">${k}</span>
+      <span>${rps.length} games</span>
+      <span style="font-family:var(--font-mono);color:${net>=0?'var(--green)':'var(--red)'}">${net>=0?'+':''}${net} RP</span>
+    </div>`;
+  });
+  el.innerHTML = rows.join('') || '<div class="empty-state" style="padding:20px">No data.</div>';
+}
+
+// ── WEEKLY REVIEW ─────────────────────────────────────────────────────────────
+async function saveWeekly() {
+  if (!CFG.scriptUrl) { openSetup(); return; }
+  const row = [
+    document.getElementById('wrWeek').value,
+    document.getElementById('wrStartRP').value,
+    document.getElementById('wrEndRP').value,
+    document.getElementById('wrPattern').value,
+    document.getElementById('wrFocus').value,
+    document.getElementById('wrImprove').value,
+    document.getElementById('wrAdjust').value,
+  ];
+  if (!row[0]) { toast('Week label is required.', 'error'); return; }
+  try {
+    toast('<span class="spinner"></span>Saving…');
+    await scriptPost('Weekly',
+      ['Week','Start RP','End RP','Pattern','Focus','Improvement','Adjust'],
+      row
+    );
+    ['wrWeek','wrStartRP','wrEndRP','wrPattern','wrFocus','wrImprove','wrAdjust'].forEach(id => document.getElementById(id).value = '');
+    await loadWeekly();
+    toast('Review saved!', 'success');
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+async function loadWeekly() {
+  if (!CFG.scriptUrl) return;
+  try {
+    const rows = await scriptGet('Weekly');
+    const el = document.getElementById('weeklyList');
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div>No weekly reviews yet.</div>';
+      return;
+    }
+    const sorted = [...rows].reverse();
+    el.innerHTML = sorted.map((r, i) => {
+      const net = (parseInt(r[2])||0) - (parseInt(r[1])||0);
+      const id = `wk-${i}`;
+      return `<div class="week-card">
+        <div class="week-header" onclick="toggleWeek('${id}')">
+          <div>
+            <div class="week-title">${r[0] || 'Week'}</div>
+            <div class="log-meta" style="margin-top:3px">
+              ${r[1]?`Start: ${r[1]} RP`:''}
+              ${r[2]?` → End: ${r[2]} RP`:''}
+              ${net ? ` <span style="color:${net>=0?'var(--green)':'var(--red)'}">(${net>=0?'+':''}${net})</span>` : ''}
+            </div>
+          </div>
+          <span class="week-chevron" id="chev-${id}">▼</span>
+        </div>
+        <div class="week-body" id="${id}">
+          ${r[3]?`<div class="detail-field"><div class="detail-label">Recurring pattern</div><div class="detail-val">${r[3]}</div></div>`:''}
+          ${r[4]?`<div class="detail-field"><div class="detail-label">Focus next week</div><div class="detail-val" style="color:var(--accent)">${r[4]}</div></div>`:''}
+          ${r[5]?`<div class="detail-field"><div class="detail-label">Biggest improvement</div><div class="detail-val">${r[5]}</div></div>`:''}
+          ${r[6]?`<div class="detail-field"><div class="detail-label">Plan adjustments</div><div class="detail-val">${r[6]}</div></div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.warn('loadWeekly:', e.message); }
+}
+
+function toggleWeek(id) {
+  const body = document.getElementById(id);
+  const chev = document.getElementById(`chev-${id}`);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const tabs = ['log','history','rp','weekly','ref'];
+    t.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${name}`).classList.add('active');
+  if (name === 'rp') renderRPChart();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.innerHTML = msg;
+  el.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ── LOAD ALL ──────────────────────────────────────────────────────────────────
+async function loadAll() {
+  await Promise.all([loadGames(), loadWeekly()]);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  document.getElementById('logDate').value = today;
+  loadConfig();
+  if (CFG.scriptUrl) loadAll();
+  document.getElementById('setupModal').addEventListener('click', e => { if(e.target.id==='setupModal') closeSetup(); });
+  document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') document.getElementById('detailModal').classList.remove('open'); });
+});
+</script>
+</body>
+</html>
