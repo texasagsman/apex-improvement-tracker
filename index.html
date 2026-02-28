@@ -771,8 +771,13 @@
 
   <div class="header" style="position:relative;overflow:hidden;">
     <div class="header-left">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <img src="./Bangalore_Icon.jpg" class="legend-icon" style="width:36px;height:36px;opacity:0.9;" alt="Bangalore">
+      <div style="display:flex;align-items:center;gap:clamp(14px,2vw,28px);">
+        <div style="position:relative;flex-shrink:0;">
+          <img src="./Bangalore_Icon.jpg"
+            style="width:clamp(64px,7vw,110px);height:clamp(64px,7vw,110px);object-fit:contain;display:block;opacity:0.95;filter:drop-shadow(0 0 8px rgba(218,41,42,0.5));"
+            alt="Bangalore Icon">
+          <div style="position:absolute;bottom:-4px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:clamp(7px,0.6vw,9px);letter-spacing:0.14em;color:var(--accent);text-transform:uppercase;opacity:0.8;">Assault</div>
+        </div>
         <div>
           <div class="logo"><span>Apex</span> Tracker</div>
           <div class="header-sub">Bangalore IGL &nbsp;·&nbsp; Diamond Ranked &nbsp;·&nbsp; 4-3 Linear</div>
